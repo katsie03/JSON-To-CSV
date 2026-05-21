@@ -31,7 +31,6 @@ def flatten_json(obj: dict, parent_key: str = '', sep: str = '.') -> dict:
 
 def json_to_csv(json_data: Any) -> tuple[list[str], list[dict]]:
     """Convert JSON data to CSV-ready format."""
-    # Handle single object vs array of objects
     if isinstance(json_data, dict):
         records = [json_data]
     elif isinstance(json_data, list):
@@ -39,7 +38,6 @@ def json_to_csv(json_data: Any) -> tuple[list[str], list[dict]]:
     else:
         raise ValueError("JSON must be an object or array of objects")
 
-    # Flatten all records and collect all unique headers
     flattened_records = []
     all_headers = set()
     
@@ -53,7 +51,6 @@ def json_to_csv(json_data: Any) -> tuple[list[str], list[dict]]:
             flattened_records.append({'value': record})
             all_headers.add('value')
 
-    # Sort headers for consistent output
     headers = sorted(all_headers)
     
     return headers, flattened_records
@@ -61,13 +58,12 @@ def json_to_csv(json_data: Any) -> tuple[list[str], list[dict]]:
 
 def convert(input_file: str, output_file: str = None):
     """Read JSON file and write CSV output."""
-    # Read JSON
     with open(input_file, 'r', encoding='utf-8') as f:
         json_data = json.load(f)
 
     headers, records = json_to_csv(json_data)
 
-    # Write CSV
+
     if output_file:
         with open(output_file, 'w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=headers)
@@ -76,7 +72,6 @@ def convert(input_file: str, output_file: str = None):
                 writer.writerow(record)
         print(f"Converted {len(records)} records to {output_file}")
     else:
-        # Write to stdout
         writer = csv.DictWriter(sys.stdout, fieldnames=headers)
         writer.writeheader()
         for record in records:
